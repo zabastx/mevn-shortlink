@@ -1,5 +1,7 @@
 # MEVN Shortlink
 
+Сокращение ссылок с использованием MongoDB, Express, Vue, Node
+
 **[Готовое приложение](https://zxlink.site)**
 
 ## Установка
