@@ -1,300 +1,340 @@
 :root {
-    --main-color: #6F14EF;
+	--main-color: #6F14EF;
 }
 
 html {
-    font-family: Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    font-size: 16px;
-    color: black;
-    text-align: left;
+	font-family: Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+	font-size: 16px;
+	color: black;
+	text-align: left;
 }
 
 body {
-    margin: 0;
-    min-height: 100vh;
-    height: 1px;
+	margin: 0;
+	min-height: 100vh;
+	height: 1px;
 }
 
 h1 {
-    margin: 0;
+	margin: 0;
 }
 
 h2 {
-    margin: 0 auto 15px;
+	margin: 0 auto 15px;
 }
 
 #app {
-    height: 100%;
+	height: 100%;
 }
 
 .app {
-    width: 100%;
-    height: 100%;
-    margin: auto;
-    font-size: 1rem;
-    display: flex;
-    place-items: center;
+	width: 100%;
+	height: 100%;
+	margin: auto;
+	font-size: 1rem;
+	display: flex;
+	place-items: center;
 }
 
 
 .material-icons {
-    font-feature-settings: 'liga';
-    -moz-font-feature-settings: 'liga';
+	font-feature-settings: 'liga';
+	-moz-font-feature-settings: 'liga';
 }
 
 
 .navigation ul {
-    list-style: none;
-    display: flex;
-    justify-content: flex-start;
-    padding: 0;
-    margin: 0;
-    height: 100%;
-    a:hover {
-        text-shadow: 0 0 10px white;
-    }
-    li {
-        border: 1px solid black;
-        border-top: none;
-        border-bottom: none;
-        padding: 10px;
-    }
+	list-style: none;
+	display: flex;
+	justify-content: flex-start;
+	padding: 0;
+	margin: 0;
+	height: 100%;
+
+	a:hover {
+		text-shadow: 0 0 10px white;
+	}
+
+	li {
+		border: 1px solid black;
+		border-top: none;
+		border-bottom: none;
+		padding: 10px;
+	}
 }
 
 .userinfo {
-    text-align: right;
-    color: white;
-    * {
-        vertical-align: middle;
-    }
+	text-align: right;
+	color: white;
+
+	* {
+		vertical-align: middle;
+	}
 }
 
 .navlinks {
-    text-decoration: none;
-    color: white;
+	text-decoration: none;
+	color: white;
 }
 
 .router-link-active {
-    color: #efec14;
+	color: #efec14;
 }
 
 .logged_user {
-    margin: 0 10px;
+	margin: 0 10px;
 }
 
-input, textarea {
-    outline-color: #6200ee;
-    outline-offset: -1px;
+input,
+textarea {
+	outline-color: #6200ee;
+	outline-offset: -1px;
 }
 
-textarea + .placeholder {
-    top: 1em;
+textarea+.placeholder {
+	top: 1em;
 }
 
 .btn {
-    font-size: 1.2em;
-    color: white;
-    background: #6200ee;
-    border: none;
-    border-radius: 5px;
-    padding: 10px;
-    transition-duration: 200ms;
-    &:hover, &:focus {
-        box-shadow: 0 5px 4px rgba(0, 0, 0, 0.5);
-        cursor: pointer;
-    }
-    &:disabled {
-        background: grey;
-        box-shadow: none;
-    }
+	font-size: 1.2em;
+	color: white;
+	background: #6200ee;
+	border: none;
+	border-radius: 5px;
+	padding: 10px;
+	transition-duration: 200ms;
+
+	&:hover,
+	&:focus {
+		box-shadow: 0 5px 4px rgba(0, 0, 0, 0.5);
+		cursor: pointer;
+	}
+
+	&:disabled {
+		background: grey;
+		box-shadow: none;
+	}
 }
 
 .register {
-    border: 1px solid var(--main-color);
-    background-color: white;
-    color: var(--main-color);
-    &:hover, &:focus {
-        background: #f4f0fa;
-    }
+	border: 1px solid var(--main-color);
+	background-color: white;
+	color: var(--main-color);
+
+	&:hover,
+	&:focus {
+		background: #f4f0fa;
+	}
 }
 
 .input {
-    display: block;
-    position: relative;
-    width: 100%;
-    box-sizing: border-box;
-    border: none;
-    height: fit-content;
-    &-label {
-        display: block;
-        margin: 15px auto 25px;
-        border: none;
-    }
-    &-text {
-        font-size: 1em;
-        border: 1px solid grey;
-        padding: 10px;
-        border-radius: 5px;
-        &:hover, &:focus {
-            border-color: black;
-        }
-    }
-    &-pass::after {
-        content: 'Минимум 6 символов';
-        width: 100%;
-        font-size: .75em;
-        position: absolute;
-        right: 5px;
-        top: -1.1em;
-        text-align: right;
-    }
-    &-login::after {
-        content: 'Минимум 3 символа';
-        width: 100%;
-        font-size: .75em;
-        position: absolute;
-        right: 5px;
-        top: -1.1em;
-        text-align: right;
-    }
+	display: block;
+	position: relative;
+	width: 100%;
+	box-sizing: border-box;
+	border: none;
+	height: fit-content;
+
+	&-label {
+		display: block;
+		margin: 15px auto 25px;
+		border: none;
+	}
+
+	&-text {
+		font-size: 1em;
+		border: 1px solid grey;
+		padding: 10px;
+		border-radius: 5px;
+
+		&:hover,
+		&:focus {
+			border-color: black;
+		}
+	}
+
+	&-pass::after {
+		content: 'Минимум 6 символов';
+		width: 100%;
+		font-size: .75em;
+		position: absolute;
+		right: 5px;
+		top: -1.1em;
+		text-align: right;
+	}
+
+	&-login::after {
+		content: 'Минимум 3 символа';
+		width: 100%;
+		font-size: .75em;
+		position: absolute;
+		right: 5px;
+		top: -1.1em;
+		text-align: right;
+	}
 }
 
 .placeholder {
-    position: absolute;
-    top: 50%;
-    left: 10px;
-    background: none;
-    font-size: 1em;
-    padding: 0;
-    transform: translateY(-50%);
-    z-index: 1;
-    transition-duration: 200ms;
+	position: absolute;
+	top: 50%;
+	left: 10px;
+	background: none;
+	font-size: 1em;
+	padding: 0;
+	transform: translateY(-50%);
+	z-index: 1;
+	transition-duration: 200ms;
 }
 
-input:focus + .placeholder, textarea:focus + .placeholder, input + .active, textarea + .active {
-    top: 0;
-    left: 5px;
-    background-color: white;
-    transform: translateY(-50%);
-    z-index: 1;
-    font-size: 0.8em;
+input:focus+.placeholder,
+textarea:focus+.placeholder,
+input+.active,
+textarea+.active {
+	top: 0;
+	left: 5px;
+	background-color: white;
+	transform: translateY(-50%);
+	z-index: 1;
+	font-size: 0.8em;
 }
 
 .logout {
-    font-size: 1.5rem;
-    padding: 0;
-    margin: -.5rem 0;
-    border: none;
-    background: none;
-    color: white;
-    vertical-align: middle;
-    cursor: pointer;
-    &:hover, &:focus {
-        text-shadow: 0 0 5px;
-    }
+	font-size: 1.5rem;
+	padding: 0;
+	margin: -.5rem 0;
+	border: none;
+	background: none;
+	color: white;
+	vertical-align: middle;
+	cursor: pointer;
+
+	&:hover,
+	&:focus {
+		text-shadow: 0 0 5px;
+	}
 }
 
 .material-icons {
-    vertical-align: middle;
-    background: none;
-    border: none;
-    cursor: pointer;
+	vertical-align: middle;
+	background: none;
+	border: none;
+	cursor: pointer;
 }
 
 .vld-parent {
-    min-height: 100px;
+	min-height: 100px;
 }
 
 .btn-feedback {
-    color: #6200ee;
-    position: absolute;
-    font-size: 4rem;
-    margin: 15px;
-    bottom: 0;
-    right: 0;
+	color: #6200ee;
+	position: absolute;
+	font-size: 4rem;
+	margin: 15px;
+	bottom: 0;
+	right: 0;
 }
 
 .view-content {
-    background: white;
-    width: 100%;
-    max-width: 750px;
-    height: 100%;
-    box-sizing: border-box;
-    transition-duration: 300ms;
-    margin: auto;
-    overflow-wrap: break-word;
-    padding: 100px 15px 15px;
+	background: white;
+	width: 100%;
+	max-width: 750px;
+	height: 100%;
+	box-sizing: border-box;
+	transition-duration: 300ms;
+	margin: auto;
+	overflow-wrap: break-word;
+	padding: 100px 15px 15px;
 }
 
 .header {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    background-color: var(--main-color);
-    box-shadow: 0 0 5px black;
-    font-size: 20px;
-    box-sizing: border-box;
-    display: flex;
-    justify-content: space-between;
-    color: white;
-    text-transform: uppercase;
-    z-index: 2;
-    h1, .userinfo, .navlinks {
-        vertical-align: middle;
-        font-size: 1.4rem;
-    }
-    h1, .userinfo {
-        display: flex;
-        place-items: center;
-        padding: 10px;
-    }
+	position: fixed;
+	top: 0;
+	width: 100%;
+	background-color: var(--main-color);
+	box-shadow: 0 0 5px black;
+	font-size: 20px;
+	box-sizing: border-box;
+	display: flex;
+	justify-content: space-between;
+	color: white;
+	text-transform: uppercase;
+	z-index: 2;
+
+	h1,
+	.userinfo,
+	.navlinks {
+		vertical-align: middle;
+		font-size: 1.4rem;
+	}
+
+	h1,
+	.userinfo {
+		display: flex;
+		place-items: center;
+		padding: 10px;
+	}
 }
 
 .moblinks {
-    position: absolute;
-    right: 0;
-    top: 47px;
-    box-shadow: 0 3px 5px black;
-    font-size: 1.4rem;
-    border-bottom-left-radius: 5px;
-    overflow: hidden;
-    background: white;
-    ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-    li {
-        padding: 5px;
-        color: black;
-        cursor: pointer;
-        &:hover, &:focus {
-            background: var(--main-color);
-            color: white;
-        }
-    }
-    .router-link-active li {
-        background: var(--main-color);
-        color: white;
-    }
-    a {
-        text-decoration: none;
-        &:focus li {
-            background: var(--main-color);
-            color: white;
-        }
-    }    
+	position: absolute;
+	right: 0;
+	top: 47px;
+	box-shadow: 0 3px 5px black;
+	font-size: 1.4rem;
+	border-bottom-left-radius: 5px;
+	overflow: hidden;
+	background: white;
+
+	ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+
+	li {
+		padding: 5px;
+		color: black;
+		cursor: pointer;
+
+		&:hover,
+		&:focus {
+			background: var(--main-color);
+			color: white;
+		}
+	}
+
+	.router-link-active li {
+		background: var(--main-color);
+		color: white;
+	}
+
+	a {
+		text-decoration: none;
+
+		&:focus li {
+			background: var(--main-color);
+			color: white;
+		}
+	}
 }
 
-.mobile {display: none;}
+.mobile {
+	display: none;
+}
 
 .link-out {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 }
 
 @media (max-width: 820px) {
-    .mobile {display: initial;}
-    .navigation, .header .userinfo {display: none;}
+	.mobile {
+		display: initial;
+	}
+
+	.navigation,
+	.header .userinfo {
+		display: none;
+	}
 }

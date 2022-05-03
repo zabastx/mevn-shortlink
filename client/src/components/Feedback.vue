@@ -1,87 +1,64 @@
 <template>
-    <aside class="feedback" aria-label="Форма обратной связи" >
-        <h2 class="heading">
-            Обратная связь
-        </h2>
-        <button class="material-icons btn-expand" @click="toggleForm">close</button>
-        <form @submit.prevent="submit" class="feedback-form" >
-            <label class="input input-label">
-                <input type="text" class="input input-text" v-model="name" required>
-                <span :class="{active: name, placeholder: true}" name="name">Имя<sup>*</sup></span>
-            </label>
-            <label class="input input-label">
-                <input type="email" class="input input-text" v-model="email" required>
-                <span :class="{active: email, placeholder: true}" name="email">Email<sup>*</sup></span>
-            </label>
-            <label class="input input-label">
-                <textarea class="input input-text" v-model="message" name="message" required></textarea>
-                <span :class="{active: message, placeholder: true}">Сообщение<sup>*</sup></span>
-            </label>
-            <loading-button :styled="false" :loading="!formReady" class="btn" />
-        </form>
-    </aside>
+	<aside class="feedback" aria-label="Форма обратной связи">
+		<h2 class="heading">
+			Обратная связь
+		</h2>
+		<button class="material-icons btn-expand" @click="$emit('toggle', true)">close</button>
+		<form @submit.prevent="submit" class="feedback-form">
+			<label class="input input-label">
+				<input type="text" class="input input-text" v-model="state.name" required>
+				<span :class="{ active: state.name, placeholder: true }" name="name">Имя<sup>*</sup></span>
+			</label>
+			<label class="input input-label">
+				<input type="email" class="input input-text" v-model="state.email" required>
+				<span :class="{ active: state.email, placeholder: true }" name="email">Email<sup>*</sup></span>
+			</label>
+			<label class="input input-label">
+				<textarea class="input input-text" v-model="state.message" name="message" required></textarea>
+				<span :class="{ active: state.message, placeholder: true }">Сообщение<sup>*</sup></span>
+			</label>
+			<loading-button :styled="false" :loading="!state.formReady" class="btn" />
+		</form>
+	</aside>
 </template>
 
-<style src="./feedback.scss" lang="scss" scoped></style>
+<style src="./feedback.scss" lang="scss" scoped>
+</style>
 
-<script>
+<script lang="ts" setup>
+import { reactive } from 'vue'
 import { myToast } from '../utils'
-import LoadingButton from "./LoadingButton.vue"
+import LoadingButton from './LoadingButton.vue'
+import axios from 'axios'
 
-export default {
-    name: 'Feedback',
-    components: {
-        LoadingButton
-    },
-    
-    data() {
-        return {
-            name: '',
-            message: '',
-            email: '',
-            formReady: true
-        }
-    },
+defineEmits<{ (e: 'toggle', value: boolean): void }>()
 
-    methods: {
-        async submit() {
-            try {
-                this.formReady = false
-                const response = await fetch('/api/bot/feedback', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        name: this.name,
-                        email: this.email,
-                        message: this.message
-                    })
-                })
-                const {message} = await response.json()
+const state = reactive({
+	name: '',
+	message: '',
+	email: '',
+	formReady: true
+})
 
-                myToast({
-                    text: message,
-                    type: 'success'
-                })
-
-                this.clearForm()
-                this.formReady = true
-            } catch (error) {
-                this.formReady = true
-            }
-        },
-
-        clearForm() {
-            this.name = '',
-            this.message = '',
-            this.email = ''
-        },
-
-        toggleForm() {
-            this.$emit('toggle', true)
-        }
-    }
+const clearForm = () => {
+	state.email = ''
+	state.name = ''
+	state.message = ''
 }
 
+const submit = async () => {
+	try {
+		state.formReady = false
+		const { name, message, email } = state
+		const { data }: { data: { message: string } } = await axios.post('/api/bot/feedback', { name, message, email })
+
+		myToast({ text: data.message, type: 'success' })
+
+		clearForm()
+	} catch (e) {
+		console.error(e)
+	} finally {
+		state.formReady = true
+	}
+}
 </script>
