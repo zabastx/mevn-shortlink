@@ -17,7 +17,7 @@
     "nodejs"
   ],
   "author": "Danil Popov <zabastx@gmail.com>",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "babel": "^6.23.0",
     "bcryptjs": "^2.4.3",

@@ -29,7 +29,7 @@
 import { reactive } from 'vue'
 import { myToast } from '../utils'
 import LoadingButton from './LoadingButton.vue'
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
 
 defineEmits<{ (e: 'toggle', value: boolean): void }>()
 
@@ -50,13 +50,18 @@ const submit = async () => {
 	try {
 		state.formReady = false
 		const { name, message, email } = state
-		const { data }: { data: { message: string } } = await axios.post('/api/bot/feedback', { name, message, email })
+		const res: AxiosResponse<{ message: string }> = await axios.post('/api/bot/feedback', { name, message, email })
 
-		myToast({ text: data.message, type: 'success' })
+		if (res.status !== 200) throw new Error(res.data.message)
+
+		myToast({ text: res.data.message, type: 'success' })
 
 		clearForm()
 	} catch (e) {
-		console.error(e)
+		myToast({
+			text: typeof e === 'string' ? e : 'Ошибка при отправке сообщения',
+			type: 'danger'
+		})
 	} finally {
 		state.formReady = true
 	}
