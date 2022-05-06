@@ -63,17 +63,19 @@ import { myToast } from '../utils'
 import Loading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/vue-loading.css'
 import { reactive } from 'vue'
-import axios, { AxiosResponse } from 'axios'
+import axios, { AxiosError, AxiosResponse } from 'axios'
 import { useRouter } from 'vue-router'
 
-interface LogData {
+interface LoginData {
 	username: string
 	token: string
 	userId: string
 }
 
+interface ResponseError extends AxiosError<{ message: string }> { }
+
 const emit = defineEmits<{
-	(e: 'login', data: LogData): void
+	(e: 'login', data: LoginData): void
 }>()
 
 const state = reactive({
@@ -81,12 +83,6 @@ const state = reactive({
 	password: '',
 	inProcess: false
 })
-
-interface LogResponse {
-	token: string
-	userId: string
-	username: string
-}
 
 const router = useRouter()
 
@@ -96,7 +92,7 @@ const handleLog = async (): Promise<void> => {
 		const username = state.username.trim().toLocaleLowerCase()
 		const password = state.password.trim().toLocaleLowerCase()
 
-		const res: AxiosResponse<LogResponse> = await axios.post('/api/auth/login', { username, password })
+		const res: AxiosResponse<LoginData> = await axios.post('/api/auth/login', { username, password })
 
 		localStorage.setItem('token', res.data.token)
 		localStorage.setItem('username', res.data.username)
@@ -106,8 +102,9 @@ const handleLog = async (): Promise<void> => {
 		router.removeRoute('Auth')
 		router.push('/create')
 	} catch (e) {
+		const text = (e as ResponseError).response?.data.message || 'Неизвестная ошибка'
 		myToast({
-			text: (e as Error).message,
+			text,
 			type: 'danger'
 		})
 	}
@@ -120,14 +117,13 @@ const handleReg = async (): Promise<void> => {
 		const username = state.username.trim().toLocaleLowerCase()
 		const password = state.password.trim().toLocaleLowerCase()
 
-		const res: AxiosResponse<{ message: string }> = await axios.post('/api/auth/register', { username, password })
-
-		if (res.status !== 200) throw new Error(res.data.message)
+		await axios.post('/api/auth/register', { username, password })
 
 		await handleLog()
 	} catch (e) {
+		const text = (e as ResponseError).response?.data.message || 'Неизвестная ошибка'
 		myToast({
-			text: (e as Error).message,
+			text,
 			type: 'danger'
 		})
 	}
