@@ -2,8 +2,6 @@
 
 Сокращение ссылок с использованием MongoDB, Express, Vue, Node
 
-**[Готовое приложение](https://zxlink.site)**
-
 ## Установка
 
 Для установки требуется [NodeJS](https://nodejs.org/) v14+ и [@vue/cli](https://cli.vuejs.org/)
