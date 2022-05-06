@@ -1,17 +1,16 @@
 <template>
 	<div class="app">
-		<header v-if="isLogged" class="header">
+		<header v-if="state.isLogged" class="header">
 			<h1>zx shortlink</h1>
 			<nav class="navigation">
 				<ul>
-					<router-link v-for="route in navLinks" :key="route" :to="route.link" :aria-label="route.label"
-						class="navlinks">
+					<router-link v-for="route in navLinks" :key="route" :to="route.link" class="navlinks">
 						<li>{{ route.text }}</li>
 					</router-link>
 				</ul>
 			</nav>
 			<div class="userinfo">
-				<span class="logged_user" aria-label="Логин пользователя">{{ username }}</span>
+				<span class="logged_user" aria-label="Логин пользователя">{{ state.username }}</span>
 				<button class="logout material-icons" type="button" title="Выйти" @click="onLogout"
 					@keyup.space.enter="onLogout">logout</button>
 			</div>
@@ -39,107 +38,69 @@
 <style lang="scss" src="./app.scss">
 </style>
 
-<script>
+<script lang="ts" setup>
+import { reactive, ref, watch, onBeforeMount } from "vue";
+import { useRouter } from "vue-router";
 import Feedback from "./components/Feedback.vue"
-import { myToast, getLinks, authRoute } from './utils'
-
-export default {
-	name: 'App',
-	components: {
-		Feedback
-	},
-
-	data() {
-		return {
-			isLogged: false,
-			navLinks: [
-				{ link: '/create', text: 'Создать ссылку' },
-				{ link: '/links', text: 'Мои ссылки' }
-			],
-			username: localStorage.getItem('username'),
-			linksData: [],
-			width: 0,
-			showMobMenu: false,
-			showFeed: false
-		}
-	},
-
-	methods: {
-		onLogin(data) {
-			this.isLogged = true
-			this.username = localStorage.getItem('username')
-			myToast({
-				text: `Вы вошли как ${data.username}`,
-				type: 'success'
-			})
-		},
-
-		onLogout() {
-			this.isLogged = false
-			this.showMobMenu = false
-			this.toAuthPage()
-		},
-
-		toAuthPage() {
-			localStorage.removeItem('token')
-			localStorage.removeItem('username')
-			this.$router.addRoute(authRoute)
-			this.$router.push('/')
-		}
-	},
-
-	watch: {
-		isLogged(val) {
-			if (!val) {
-				this.toAuthPage()
-			}
-		}
-	},
-
-	async created() {
-		const token = localStorage.getItem('token')
-		if (token) {
-			try {
-				this.linksData = await getLinks(token)
-				this.isLogged = true
-			} catch (e) {
-				console.log(e.message)
-				this.toAuthPage()
-			}
-		} else {
-			this.toAuthPage()
-		}
-	}
-}
-</script>
-
-
-<!-- <script setup>
-import Feedback from './components/Feedback.vue'
-import { myToast, getLinks, authRoute } from './utils'
-import { ref } from 'vue'
+import { myToast, getLinks, authRoute, LoginData, Link } from './utils'
 
 const navLinks = [
 	{ link: '/create', text: 'Создать ссылку' },
 	{ link: '/links', text: 'Мои ссылки' }
 ]
 
-const username = localStorage.getItem('username')
+const state = reactive({
+	isLogged: false,
+	username: localStorage.getItem('username') || '',
+	linksData: [] as any[],
+	width: 0
+})
 
-const isLogged = ref(false)
+const showMobMenu = ref(false)
+const showFeed = ref(false)
 
-onCreated(async () => {
+const router = useRouter()
+
+function onLogin(data: LoginData): void {
+	state.isLogged = true
+	state.username = localStorage.getItem('username') || ''
+	myToast({
+		text: `Вы вошли как ${data.username}`,
+		type: 'success'
+	})
+}
+
+function onLogout(): void {
+	state.isLogged = false
+	showMobMenu.value = false
+	toAuthPage()
+}
+
+function toAuthPage(): void {
+	localStorage.removeItem('token')
+	localStorage.removeItem('username')
+	router.addRoute(authRoute)
+	router.push('/')
+}
+
+watch(() => state.isLogged, newVal => {
+	if (!newVal) toAuthPage()
+})
+
+onBeforeMount(async () => {
 	const token = localStorage.getItem('token')
+
 	if (token) {
 		try {
-			linksData = await getLinks(token)
-			isLogged = true
+			state.linksData = await getLinks(token)
+			state.isLogged = true
 		} catch (e) {
-			console.log(e.message)
+			const msg = (e as Error).message
+			console.error('Error', msg)
 			toAuthPage()
 		}
 	} else {
 		toAuthPage()
 	}
 })
-</script> -->
+</script>

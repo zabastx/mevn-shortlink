@@ -4,10 +4,11 @@
 		<div class="vld-parent">
 			<Loading :active="isFetching" :is-full-page="false" :opacity="0" color="#6e14ef" />
 			<div v-show="!isFetching" class="link-info">
-				<p>Оригинальная: <a :href="source" rel="nofollower norefferer" target="_blank">{{ source }}</a></p>
-				<p>Новая: <a :href="`http://${short}`" rel="nofollower norefferer" target="_blank">{{ short }}</a></p>
-				<p>Дата создания: <time :datetime="datetime">{{ date }}</time></p>
-				<p>Переходов по ссылке: {{ clicks }}</p>
+				<p>Оригинальная: <a :href="state.original" rel="nofollower norefferer" target="_blank">{{ state.original }}</a></p>
+				<p>Новая: <a :href="`http://${state.short}`" rel="nofollower norefferer" target="_blank">{{ state.short }}</a>
+				</p>
+				<p>Дата создания: <time :datetime="state.datetime">{{ state.date }}</time></p>
+				<p>Переходов по ссылке: {{ state.clicks }}</p>
 			</div>
 		</div>
 		<div class="actions">
@@ -35,55 +36,57 @@
 }
 </style>
 
-<script>
+<script lang="ts" setup>
+import { onBeforeMount, reactive, ref } from 'vue';
 import Loading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/vue-loading.css'
+import { useRoute, useRouter } from 'vue-router';
 import { deleteLink, getDetails, myToast } from '../utils'
 
-export default {
-	name: 'Detail',
-	components: {
-		Loading
-	},
-	data() {
-		return {
-			source: '',
-			short: '',
-			date: '',
-			clicks: '',
-			datetime: '',
-			isFetching: true
-		}
-	},
+const isFetching = ref(true)
 
-	methods: {
-		async linkDelete() {
-			this.isFetching = true
-			try {
-				await deleteLink(this.$route.params.code)
+const state = reactive({
+	original: '',
+	short: '',
+	date: '',
+	clicks: 0,
+	datetime: ''
+})
 
-				myToast({
-					text: 'Ссылка удалена',
-					type: 'success'
-				})
-				this.$router.push('/links')
-			} catch (e) {
-				console.error(e.message)
-			}
-			this.isFetching = false
-		}
-	},
+const route = useRoute()
+const router = useRouter()
 
-	async created() {
-		this.isFetching = true
-		try {
-			const data = await getDetails(this.$route.params.code)
-			Object.assign(this, data)
-		} catch (e) {
-			console.log(e.message)
-			this.$router.push('/links')
-		}
-		this.isFetching = false
+async function linkDelete(): Promise<void> {
+	isFetching.value = true
+	try {
+		await deleteLink(route.params.code as string)
+
+		myToast({
+			text: 'Ссылка удалена',
+			type: 'success'
+		})
+
+		router.push('/links')
+	} catch (e) {
+		const text = (e as Error).message
+		myToast({
+			text,
+			type: 'danger'
+		})
 	}
+	isFetching.value = false
 }
+
+onBeforeMount(async () => {
+	isFetching.value = true
+	try {
+		const data = await getDetails(route.params.code as string)
+		Object.assign(state, data)
+	} catch (e) {
+		console.error('Error', (e as Error).message)
+		router.push('/links')
+	}
+	isFetching.value = false
+})
+
 </script>

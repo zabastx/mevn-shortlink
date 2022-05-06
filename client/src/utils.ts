@@ -14,11 +14,29 @@ interface ToastOpts {
 	type: 'success' | 'danger' | 'info' | 'warning' | 'default'
 }
 
-interface Link {
+export interface Link {
 	to: string
 	from: string
 	code: string
 	_id: string
+	clicks: number
+}
+
+export interface LinkFront {
+	original: string
+	short: string
+	id?: string
+	idx?: number
+	code?: string
+	clicks: number
+	date: string
+	datetime: string
+}
+
+export interface LoginData {
+	username: string
+	token: string
+	userId: string
 }
 
 export function myToast(opts: ToastOpts) {
@@ -40,7 +58,7 @@ export function myToast(opts: ToastOpts) {
  * @returns {Promise<Array>} Список ссылок
  */
 
-export async function getLinks(token: string) {
+export async function getLinks(token: string): Promise<LinkFront[]> {
 	const res = await axios.get('/api/link/', {
 		headers: {
 			'Content-Type': 'application/json',
@@ -74,7 +92,7 @@ export const authRoute = {
  * @returns {Promise} Детали Ссылки
  */
 
-export async function getDetails(code: string) {
+export async function getDetails(code: string): Promise<LinkFront> {
 	const response = await fetch(`/api/link/${code}`, {
 		method: 'GET',
 		headers: {
@@ -87,7 +105,7 @@ export async function getDetails(code: string) {
 	if (!response.ok) throw Error(data.message)
 
 	return {
-		source: data.to,
+		original: data.to,
 		short: data.from.replace('http://', ''),
 		date: new Date(data.date).toLocaleDateString(),
 		datetime: new Date(data.date).toISOString(),

@@ -59,18 +59,12 @@ h1 {
 </style>
 
 <script lang="ts" setup>
-import { myToast } from '../utils'
+import { myToast, LoginData } from '../utils'
 import Loading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/vue-loading.css'
 import { reactive } from 'vue'
 import axios, { AxiosError, AxiosResponse } from 'axios'
 import { useRouter } from 'vue-router'
-
-interface LoginData {
-	username: string
-	token: string
-	userId: string
-}
 
 interface ResponseError extends AxiosError<{ message: string }> { }
 

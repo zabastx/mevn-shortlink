@@ -12,8 +12,8 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr v-for="link in linksList" :key="link" @click="toDetails(link.code)"
-						@keypress.enter.space="toDetails(link.code)" tabindex="0">
+					<tr v-for="link in linksList" :key="link.code" @click="toDetails(link.code!)"
+						@keypress.enter.space="toDetails(link.code!)" tabindex="0">
 						<th scope="row">{{ link.idx }}</th>
 						<td>{{ link.original }}</td>
 						<td>{{ link.short }}</td>
@@ -26,6 +26,30 @@
 		</div>
 	</main>
 </template>
+
+<script lang="ts" setup>
+import { onBeforeMount, ref } from 'vue';
+import Loading from 'vue-loading-overlay'
+import 'vue-loading-overlay/dist/vue-loading.css'
+import { useRouter } from 'vue-router';
+import { getLinks, LinkFront } from '../utils'
+
+const linksList = ref([] as LinkFront[])
+const isFetching = ref(true)
+
+const router = useRouter()
+
+const toDetails = (code: string): void => {
+	router.push(`/detail/${code}`)
+}
+
+onBeforeMount(async () => {
+	isFetching.value = true
+	const token = localStorage.getItem('token') || ''
+	if (token) linksList.value = await getLinks(token)
+	isFetching.value = false
+})
+</script>
 
 <style lang="scss" scoped>
 table {
@@ -66,36 +90,3 @@ tr {
 }
 </style>
 
-<script>
-import Loading from 'vue-loading-overlay'
-import 'vue-loading-overlay/dist/vue-loading.css'
-import { getLinks } from '../utils'
-
-export default {
-	name: 'Links',
-	components: {
-		Loading
-	},
-	data() {
-		return {
-			linksList: [],
-			isFetching: true,
-		}
-	},
-
-	methods: {
-		toDetails(code) { this.$router.push(`/detail/${code}`) }
-	},
-
-	async mounted() {
-		this.isFetching = true
-		try {
-			this.linksList = await getLinks(localStorage.getItem('token'))
-		} catch (e) {
-			console.log(e.message)
-		}
-		this.isFetching = false
-	}
-
-}
-</script>

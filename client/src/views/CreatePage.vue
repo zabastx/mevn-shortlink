@@ -11,53 +11,51 @@
 	</main>
 </template>
 
-<script>
-import { myToast } from '../utils'
+<script lang="ts" setup>
+import axios, { AxiosError, AxiosResponse } from 'axios';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { Link, myToast } from '../utils'
 
-export default {
-	name: 'Create',
-	data() {
-		return {
-			link: '',
-			inProcess: false,
-		}
-	},
+const emit = defineEmits<{
+	(e: 'error'): void
+}>()
 
-	methods: {
-		async createLink() {
-			try {
-				this.inProcess = true
-				const response = await fetch('/api/link/new/', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-						Authorization: `Bearer ${localStorage.getItem('token')}`
-					},
-					body: JSON.stringify({
-						to: this.link
-					})
-				})
+const link = ref('')
+const inProcess = ref(false)
 
-				const data = await response.json()
+const router = useRouter()
 
-				if (!response.ok) throw Error(data.message)
-
-				myToast({
-					text: data.message,
-					type: 'success'
-				})
-				this.link = ''
-				this.inProcess = false
-				this.$emit('createLink')
-				this.$router.push(`/detail/${data.link.code}`)
-			} catch (e) {
-				console.error(e.message)
-				this.$emit('error', e)
+async function createLink() {
+	inProcess.value = true
+	try {
+		const res: AxiosResponse<{ message: string, link: Link }> = await axios.post('/api/link/new/', {
+			to: link.value
+		}, {
+			headers: {
+				Authorization: `Bearer ${localStorage.getItem('token')}`
 			}
-		}
-	}
-}
+		})
 
+		myToast({
+			text: res.data.message,
+			type: 'success'
+		})
+
+		link.value = ''
+		inProcess.value = false
+
+		router.push(`/detail/${res.data.link.code}`)
+	} catch (e) {
+		const err = e as AxiosError<{ message: string }>
+		myToast({
+			text: err.response?.data.message || 'Неизвестная ошибка',
+			type: 'danger'
+		})
+		emit('error')
+	}
+	inProcess.value = false
+}
 </script>
 
 <style lang="scss" scoped>
