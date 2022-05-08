@@ -1,6 +1,6 @@
 {
   "name": "mevn-shortlink",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "description": "Link shortener MEVN app",
   "main": "dist/app.js",
   "scripts": {
