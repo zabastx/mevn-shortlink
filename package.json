@@ -1,13 +1,13 @@
 {
   "name": "mevn-shortlink",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Link shortener MEVN app",
   "main": "dist/app.js",
   "scripts": {
     "start": "node dist/app.js",
     "client": "npm run build --prefix client",
     "full:install": "npm i && npm i --prefix client",
-		"tsc": "tsc"
+    "tsc": "tsc"
   },
   "keywords": [
     "mevn",
