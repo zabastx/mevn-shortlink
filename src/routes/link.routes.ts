@@ -1,21 +1,34 @@
-require('dotenv').config()
-const router = require('express').Router()
-const Link = require('../models/Link')
-const jwt = require('jsonwebtoken')
-const sanitize = require('mongo-sanitize')
+import { Router, Request, Response, NextFunction } from 'express'
+import Link from '../models/Link'
+import jwt from 'jsonwebtoken'
+import sanitize from 'mongo-sanitize'
+import { generate } from 'shortid'
 
-router.post('/new', authMiddle, async (req, res) => {
+const router = Router()
+
+type User = {
+	userId: string
+}
+
+type ReqBody = {
+	to: string
+	user: User
+}
+
+interface LinkRequest extends Request<{ code: string }, {}, ReqBody> { }
+
+router.post('/new', authMiddle, async (req: LinkRequest, res: Response) => {
 	try {
 		let { to } = req.body
-		to = sanitize(to)
-		const code = require('shortid').generate()
+		to = sanitize<string>(to)
+		const code = generate()
 		const linkReady = await Link.findOne({ to })
 
 		if (linkReady) return res.json({ link: linkReady })
 
-		const from = `${process.env.BASE_URL}/${code}`
+		const from = `${process.env.BASE_URL}/t/${code}`
 		const link = new Link({
-			to, from, code, owner: req.user.userId
+			to, from, code, owner: req.body.user.userId
 		})
 
 		await link.save()
@@ -28,7 +41,7 @@ router.post('/new', authMiddle, async (req, res) => {
 
 router.patch('/del/:code', authMiddle, async (req, res) => {
 	try {
-		const clean = sanitize(req.params.code)
+		const clean = sanitize<string>(req.params.code)
 
 		await Link.findOneAndDelete({ code: clean })
 
@@ -41,7 +54,7 @@ router.patch('/del/:code', authMiddle, async (req, res) => {
 
 router.get('/', authMiddle, async (req, res) => {
 	try {
-		const clean = sanitize(req.user.userId)
+		const clean = sanitize<string>(req.body.user.userId)
 		const links = await Link.find({ owner: clean })
 		res.status(200).json(links)
 	} catch (e) {
@@ -51,7 +64,7 @@ router.get('/', authMiddle, async (req, res) => {
 
 router.get('/:code', authMiddle, async (req, res) => {
 	try {
-		const clean = sanitize(req.params.code)
+		const clean = sanitize<string>(req.params.code)
 		const link = await Link.findOne({ code: clean })
 		res.status(200).json(link)
 	} catch (e) {
@@ -59,21 +72,23 @@ router.get('/:code', authMiddle, async (req, res) => {
 	}
 })
 
-function authMiddle(req, res, next) {
+function authMiddle(req: LinkRequest, res: Response, next: NextFunction) {
 	if (req.method === 'OPTIONS') return next()
-
 	try {
+		if (!req.headers.authorization) throw new Error('Unauthorized')
 		const token = req.headers.authorization.split(' ')[1]
 		if (!token) return res.status(401)
 
-		const tokenDecode = jwt.verify(token, process.env.JWTS)
-		req.user = tokenDecode
+		const tokenDecode = jwt.verify(token, process.env.JWTS!)
+
+		req.body.user = tokenDecode as User
 
 		next()
 	} catch (e) {
-		res.status(401).json({ message: e.message })
-		console.log(e.message)
+		const err = e as Error
+		res.status(401).json({ message: err.message })
+		console.log(err.message)
 	}
 }
 
-module.exports = router
+export default router
