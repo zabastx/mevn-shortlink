@@ -10,12 +10,13 @@
 ```sh
 npm run full:install
 ```
-### Запуск development сервера/клиента
+
+### Компиляция typescript серверной части
 ```sh
-npm run dev
+npm run tsc
 ```
 
-### Сборка статических файлов в client/dist
+### Сборка клиентской части в client/dist
 ```sh
 npm run client
 ```
