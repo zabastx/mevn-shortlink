@@ -1,16 +1,24 @@
-require('dotenv').config()
-const router = require('express').Router()
-const bcrypt = require('bcryptjs')
-const { check, validationResult } = require('express-validator')
-const User = require('../models/User')
-const jwt = require('jsonwebtoken')
-const sanitize = require('mongo-sanitize')
+import { Router, Request, Response } from 'express'
+import { check, validationResult } from 'express-validator'
+import User from '../models/User'
+import jwt from 'jsonwebtoken'
+import sanitize from 'mongo-sanitize'
+import bcrypt from 'bcryptjs'
+
+const router = Router()
+
+interface AuthRequest extends Request {
+	body: {
+		username: string
+		password: string
+	}
+}
 
 router.post('/register', [
 	check('username', 'Логин короче 3 символов').isLength({ min: 3 }),
 	check('password', 'Пароль короче 6 символов').isLength({ min: 6 })
 ],
-	async (req, res) => {
+	async (req: AuthRequest, res: Response) => {
 		try {
 			const errors = validationResult(req)
 
@@ -30,7 +38,6 @@ router.post('/register', [
 			}
 
 			const hashedPass = await bcrypt.hash(password, 12)
-			bcrypt.hashSync
 
 			const user = new User({ username, password: hashedPass })
 			await user.save()
@@ -45,7 +52,7 @@ router.post('/register', [
 router.post('/login', [
 	check('username', 'Invalid username').exists(),
 	check('password', 'Password field is empty').exists()
-], async (req, res) => {
+], async (req: AuthRequest, res: Response) => {
 	try {
 		const errors = validationResult(req)
 
@@ -71,7 +78,7 @@ router.post('/login', [
 			return res.status(400).json({ message: 'Неверный пароль' })
 		}
 
-		const token = jwt.sign({ userId: user.id }, process.env.JWTS, { expiresIn: '1h' })
+		const token = jwt.sign({ userId: user.id }, process.env.JWTS!, { expiresIn: '1h' })
 
 		res.status(200).json({ token, userId: user.id, username })
 	} catch (error) {
@@ -80,4 +87,4 @@ router.post('/login', [
 	}
 })
 
-module.exports = router
+export default router

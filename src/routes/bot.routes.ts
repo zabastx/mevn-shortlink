@@ -1,10 +1,20 @@
-require('dotenv').config()
-const fetch = require('node-fetch')
-const router = require('express').Router()
+import { Router, Request } from 'express'
+import fetch from 'node-fetch'
 
-router.post('/feedback', async (req, res) => {
+const router = Router()
+
+interface BotRequest extends Request {
+	body: {
+		name: string
+		email: string
+		message: string
+	}
+}
+
+router.post('/feedback', async (req: BotRequest, res) => {
 	try {
 		const { name, email, message } = req.body
+
 		const response = await fetch(`https://api.telegram.org/bot${process.env.BOT_API}/sendMessage`, {
 			method: 'POST',
 			headers: {
@@ -19,17 +29,9 @@ router.post('/feedback', async (req, res) => {
 
 		res.status(200).json({ message: 'Сообщение отправлено' })
 	} catch (e) {
-		console.log(e.message)
+		console.log((e as Error).message)
 		res.status(400).json({ message: 'Ошибка при отправке сообщения' })
 	}
 })
 
-router.post(`/${process.env.BOT_API}`, async (req, res) => {
-	try {
-		console.log(req)
-	} catch (e) {
-		console.log(e)
-	}
-})
-
-module.exports = router
+export default router
